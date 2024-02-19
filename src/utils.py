@@ -30,7 +30,7 @@ def postgresql_format(input_data) -> list[tuple]:
 
 def create_database(db_name: str, params: dict) -> None:
     """Создает новую базу данных."""
-    conn = psycopg2.connect(dbname=db_name, **params)
+    conn = psycopg2.connect(dbname="postgres", **params)
     conn.autocommit = True
     cur = conn.cursor()
 
@@ -52,8 +52,7 @@ def create_vacancy_table(cur) -> None:
     vacancy_url VARCHAR(100),
     currency VARCHAR(5),
     salary_from int,
-    salary_to int,
-    salary_gross bool)"""
+    salary_to int)"""
     )
 
 
@@ -62,6 +61,6 @@ def insert_vacancy_data(cur, vacancies: list[tuple]) -> None:
     for vacancy in vacancies:
         cur.execute(
             """INSERT INTO vacancies (company_name, vacancy_name, vacancy_url, currency, salary_from, salary_to) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+        VALUES (%s, %s, %s, %s, %s, %s)""",
             vacancy,
         )
