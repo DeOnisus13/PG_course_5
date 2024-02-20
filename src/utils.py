@@ -1,21 +1,29 @@
 import json
+
 import psycopg2
+
 from config import COMPANIES_JSON
 
 
-def get_companies_from_json(json_file=COMPANIES_JSON):
+def get_companies_from_json(json_file=COMPANIES_JSON) -> list[dict]:
+    """
+    Функция получения данных из json файла
+    """
     with open(json_file, encoding="UTF-8") as file:
         return json.load(file)
 
 
 def validate_salary(salary: int | None) -> int:
+    """
+    Функция проверки заработной платы
+    """
     if salary is None:
         return 0
     return salary
 
 
 def postgresql_format(input_data) -> list[tuple]:
-    """Форматирует данные из списка словарей в список кортежей для PostgreSQL."""
+    """Функция для форматирования данных из списка словарей в список кортежей для PostgreSQL."""
     tuples_list = []
     for vacancy in input_data["items"]:
         company_name = vacancy["employer"]["name"]
@@ -38,7 +46,7 @@ def postgresql_format(input_data) -> list[tuple]:
 
 
 def create_database(db_name: str, params: dict) -> None:
-    """Создает новую базу данных."""
+    """Функция создания новой базы данных."""
     conn = psycopg2.connect(dbname="postgres", **params)
     conn.autocommit = True
     cur = conn.cursor()
@@ -52,7 +60,7 @@ def create_database(db_name: str, params: dict) -> None:
 
 
 def create_vacancy_table(cur) -> None:
-    """Создает таблицу vacancies."""
+    """Функция создания таблицы vacancies."""
     cur.execute(
         """CREATE TABLE vacancies 
     (vacancy_id SERIAL PRIMARY KEY, 
@@ -66,7 +74,7 @@ def create_vacancy_table(cur) -> None:
 
 
 def insert_vacancy_data(cur, vacancies: list[tuple]) -> None:
-    """Добавляет данные о вакансиях в таблицу vacancies."""
+    """Добавление данных о вакансиях в таблицу vacancies."""
     for vacancy in vacancies:
         cur.execute(
             """INSERT INTO vacancies (company_name, vacancy_name, vacancy_url, currency, salary_from, salary_to) 

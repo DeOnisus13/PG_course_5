@@ -2,6 +2,7 @@ class DBManager:
     """
     Класс для работы с базой данных
     """
+
     def get_companies_and_vacancies_count(self, cur) -> dict:
         """
         Получает список всех компаний и количество вакансий у каждой компании
@@ -21,7 +22,7 @@ class DBManager:
 
     def all_vacancies(self, cur) -> list:
         """
-        Получает список всех вакансий с указанием названия компании, названия вакансии и зарплаты и ссылки на вакансию
+        Получает список всех вакансий с указанием названия компании, названия вакансии, зарплаты и ссылки на вакансию
         """
         cur.execute("SELECT company_name, vacancy_name, salary_to, vacancy_url FROM vacancies")
         rows = cur.fetchall()
@@ -49,7 +50,7 @@ class DBManager:
 
     def get_vacancies_with_keyword(self, cur, word: str) -> list:
         """
-        Получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python.
+        Получает список всех вакансий, в названии которых содержится переданное слово
         """
         cur.execute(
             f"""
