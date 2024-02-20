@@ -8,6 +8,12 @@ def get_companies_from_json(json_file=COMPANIES_JSON):
         return json.load(file)
 
 
+def validate_salary(salary: int | None) -> int:
+    if salary is None:
+        return 0
+    return salary
+
+
 def postgresql_format(input_data) -> list[tuple]:
     """Форматирует данные из списка словарей в список кортежей для PostgreSQL."""
     tuples_list = []
@@ -15,16 +21,19 @@ def postgresql_format(input_data) -> list[tuple]:
         company_name = vacancy["employer"]["name"]
         vacancy_name = vacancy["name"]
         vacancy_url = vacancy["alternate_url"]
+
         if vacancy["salary"]:
             salary_currency = vacancy["salary"]["currency"]
-            salary_from = vacancy["salary"]["from"]
-            salary_to = vacancy["salary"]["to"]
-        else:
-            salary_currency = None
-            salary_from = 0
-            salary_to = 0
-        info = (company_name, vacancy_name, vacancy_url, salary_currency, salary_from, salary_to)
-        tuples_list.append(info)
+            salary_from = validate_salary(vacancy["salary"]["from"])
+            salary_to = validate_salary(vacancy["salary"]["to"])
+
+            if salary_to < salary_from:
+                salary_to = salary_from
+            elif salary_to != 0 and salary_from == 0:
+                salary_from = salary_to
+
+            info = (company_name, vacancy_name, vacancy_url, salary_currency, salary_from, salary_to)
+            tuples_list.append(info)
     return tuples_list
 
 
