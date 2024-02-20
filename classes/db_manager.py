@@ -25,10 +25,7 @@ class DBManager:
         """
         cur.execute("SELECT company_name, vacancy_name, salary_to, vacancy_url FROM vacancies")
         rows = cur.fetchall()
-        exit_data = []
-        for row in rows:
-            exit_data.append(list(row))
-        return exit_data
+        return [list(row) for row in rows]
 
     def avg_salary(self, cur) -> int:
         """
@@ -48,10 +45,7 @@ class DBManager:
         WHERE salary_to > (SELECT AVG(salary_to) FROM vacancies)"""
         )
         rows = cur.fetchall()
-        exit_data = []
-        for row in rows:
-            exit_data.append(list(row))
-        return exit_data
+        return [list(row) for row in rows]
 
     def get_vacancies_with_keyword(self, cur, word: str) -> list:
         """
@@ -59,12 +53,9 @@ class DBManager:
         """
         cur.execute(
             f"""
-        SELECT company_name, vacancy_name, salary_to, vacancy_url 
+        SELECT company_name, vacancy_name, salary_to, vacancy_url
         FROM vacancies
-        WHERE vacancy_name LIKE '%{word}%'"""
+        WHERE LOWER(vacancy_name) LIKE LOWER('%{word}%')"""
         )
         rows = cur.fetchall()
-        exit_data = []
-        for row in rows:
-            exit_data.append(list(row))
-        return exit_data
+        return [list(row) for row in rows]
